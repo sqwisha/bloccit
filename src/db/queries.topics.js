@@ -1,14 +1,14 @@
 const Topic = require('./models').Topic;
 
 module.exports = {
-  getAllTopics(callback){
+  getAllTopics(callback) {
     return Topic.all()
     .then((topics) => {
       callback(null, topics);
     })
     .catch((err) => {
       callback(err);
-    })
+    });
   },
   addTopic(newTopic, callback) {
     return Topic.create({
@@ -29,7 +29,7 @@ module.exports = {
     })
     .catch((err) => {
       callback(err);
-    })
+    });
   },
   deleteTopic(id, callback) {
     return Topic.destroy({

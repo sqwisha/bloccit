@@ -1,9 +1,9 @@
 const topicQueries = require('../db/queries.topics.js');
 
 module.exports = {
-  index(req, res, next){
+  index(req, res, next) {
     topicQueries.getAllTopics((err, topics) => {
-      if (err){
+      if (err) {
         res.redirect(500, 'static/index');
       } else {
         res.render('topics/index', {topics});
@@ -18,6 +18,7 @@ module.exports = {
       title: req.body.title,
       description: req.body.description
     };
+
     topicQueries.addTopic(newTopic, (err, topic) => {
       if (err) {
         res.redirect(500, '/topics/new');
@@ -62,4 +63,4 @@ module.exports = {
       }
     });
   }
-}
+};

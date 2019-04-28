@@ -12,7 +12,7 @@
   "devDependencies": {
     "faker": "^4.1.0",
     "jasmine": "^3.4.0",
-    "request": "^2.83.0"
+    "request": "^2.88.0"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
