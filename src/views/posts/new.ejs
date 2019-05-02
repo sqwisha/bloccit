@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../static/partials/head.ejs %>
+    <title>New Post</title>
+  </head>
+  <body>
+
+    <% include ../static/partials/baseScripts.ejs %>
+
+    <main class="container">
+      <h1>New Post</h1>
+
+      <form action="/topics/<%= topic.id %>/posts/create" method="post">
+        <div class="form-group">
+          <label for="title">Post title</label>
+          <input type="text" name="title" aria-describedby="titleHelp" placeholder="Enter Title" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="body">Post body</label>
+        <textarea rows="4" class="form-control" name="body" placeholder="Enter Post body"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+    </main>
+
+    <% include ../static/partials/baseScripts.ejs %>
+
+  </body>
+</html>
