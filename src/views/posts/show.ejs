@@ -10,15 +10,36 @@
 
     <main class="container">
 
-      <h1><%= post.title %></h1>
-        <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>/edit" class="btn btn-warning">Edit</a>
-        <form style="display:initial" action="/topics/<%= post.topicId %>/posts/<%= post.id %>/destroy" method="post">
-          <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
+      <h1 style="display: inline-block"><%= post.title %></h1>
+
+        <% flairs.forEach((flair) => { %>
+          <div class="badge badge-pill" style="border: 2px solid <%= flair.color %>"><%= flair.name %>
+            <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>/flair/<%= flair.id %>/edit"><i style="color: #212529" class="fas fa-pen"></i></span></a>
+            <span>
+              <form style="display:initial" action="/topics/<%= post.topicId %>/posts/<%= post.id %>/flair/<%= flair.id %>/destroy" method="post">
+                <button type="submit" class="badge" style="border: none"><i class="fas fa-times"></i></button>
+              </form>
+            </span>
+          </div>
+        <% }) %>
+
+        <div class="button-group" style="display: inline-block">
+          <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>/flair/new" class="badge badge-success">Add</a>
+        </div>
+
+        <div class="button-group">
+          <a href="/topics/<%= post.topicId %>/posts/<%= post.id %>/edit" class="btn btn-warning">Edit</a>
+
+          <form style="display:initial" action="/topics/<%= post.topicId %>/posts/<%= post.id %>/destroy" method="post">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+
       <p><%= post.body %></p>
 
     </main>
 
     <% include ../static/partials/baseScripts.ejs %>
+
   </body>
 </html>
