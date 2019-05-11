@@ -1,21 +1,42 @@
 const sequelize = require('../../src/db/models').sequelize;
 const Topic = require('../../src/db/models').Topic;
 const Post = require('../../src/db/models').Post;
+const User = require('../../src/db/models').User;
 
 describe('Topic', () => {
   beforeEach((done) => {
     this.topic;
-    Topic.create({
-      title: 'Starfleet Captains',
-      description: 'Which Starfleet Captain fits your personality?'
-    })
-    .then((topic) => {
-      this.topic = topic;
-      done();
-    })
-    .catch((err) => {
-      console.log(err);
-      done();
+    this.post;
+    this.user;
+
+    sequelize.sync({force: true}).then((res) => {
+      User.create({
+        email: 'starman@tesla.com',
+        password: 'Trekkie4lyfe'
+      })
+      .then((user) => {
+        this.user = user;
+
+        Topic.create({
+          title: 'Expeditions to Alpha Centauri',
+          description: 'A compilation of reports from recent visits to the star system.',
+          posts: [{
+            title: 'My first visit to Proxima Centauri b',
+            body: 'I saw some rocks.',
+            userId: this.user.id
+          }]
+        }, {
+          include: {
+            model: Post,
+            as: 'posts'
+          }
+        })
+        .then((topic) => {
+          this.topic = topic;
+          this.post = topic.posts[0];
+          done();
+        });
+      });
     });
   });
 
@@ -44,16 +65,17 @@ describe('Topic', () => {
   describe('#getPosts()', () => {
     it('should return posts associated with given topic', (done) => {
       Post.create({
-        title: 'Janeway all the way',
-        body: 'Because I do what needs to be done while maintaining my humanity',
-        topicId: this.topic.id
+        title: 'Transit Experience',
+        body: 'It took so long to get there!',
+        topicId: this.topic.id,
+        userId: this.user.id
       })
       .then((post) => {
         Topic.findById(post.topicId)
         .then((topic) => {
           topic.getPosts()
           .then((posts) => {
-            expect(posts[0].title).toBe('Janeway all the way');
+            expect(posts[1].title).toBe('Transit Experience');
             done();
           })
           .catch((err) => {
