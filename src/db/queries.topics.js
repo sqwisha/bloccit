@@ -55,7 +55,7 @@ module.exports = {
     })
     .catch((err) => {
       callback(err);
-    })
+    });
   },
   updateTopic(req, updatedTopic, callback) {
     return Topic.findById(req.params.id)

@@ -25,6 +25,8 @@ describe('routes : topics', () => {
 
   });
 
+//------------------------ ADMIN USER ----------------------------
+
   describe('admin user performing CRUD actions for Topic', () => {
     beforeEach((done) => {
       User.create({
@@ -181,6 +183,8 @@ describe('routes : topics', () => {
     });
 
   });
+
+//------------------------ MEMBER USER -----------------------------
 
   describe('member user performing CRUD actions for Topic', () => {
     beforeEach((done) => {
