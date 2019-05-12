@@ -127,15 +127,74 @@ describe('routes : comments', () => {
     });
   });
 
-//---------------------------- SIGNED-IN USER ----------------------------------
+//------------------------------ ADMIN USER -----------------------------------
 
-  describe('signed in user performing CRUD actions for Comment', () => {
+describe('admin user performing CRUD actions', () => {
+
+  beforeEach((done) => {
+    User.create({
+      email: 'admin@example.com',
+      password: '123456',
+      role: 'admin'
+    })
+    .then((user) => {
+      request.get({
+        url: 'http://localhost:3000/auth/fake',
+        form: {
+          role: user.role,
+          userId: user.id,
+          email: user.email
+        }
+      },
+        (err, res, body) => {
+          done();
+        }
+      );
+    });
+  });
+
+  describe('POST /topics/:topicId/posts/:postId/comments/:id/destroy', () => {
+
+    it('should delete the non-admin-owned comment with the associated ID', (done) => {
+      Comment.create({
+        body: 'There are definitely whales in space.',
+        postId: this.post.id,
+        userId: this.user.id
+      })
+      .then((comment) => {
+        Comment.all()
+        .then((comments) => {
+          const commentCountBeforeDelete = comments.length;
+
+          request.post(
+            `${base}${this.topic.id}/posts/${this.post.id}/comments/${comment.id}/destroy`,
+            (err, res, body) => {
+            Comment.all()
+            .then((comments) => {
+              expect(err).toBeNull();
+              expect(comments.length).toBe(commentCountBeforeDelete - 1);
+              done();
+            });
+          });
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        done();
+      });
+    });
+
+  });
+});
+
+//---------------------------- MEMBER USER ----------------------------------
+
+  describe('member user performing CRUD actions for Comment', () => {
 
     beforeEach((done) => {
       request.get({
         url: 'http://localhost:3000/auth/fake',
         form: {
-          role: 'member',
           userId: this.user.id
         }
       },
@@ -173,7 +232,7 @@ describe('routes : comments', () => {
 
     describe('POST /topics/:topicId/posts/:postId/comments/:id/destroy', () => {
 
-      it('should delete the comment with the associated ID', (done) => {
+      it('should delete the member-owned comment with the associated ID', (done) => {
         Comment.all()
         .then((comments) => {
           const commentCountBeforeDelete = comments.length;
@@ -193,8 +252,47 @@ describe('routes : comments', () => {
           });
         });
       });
+
+      it('should not delete the non-member-owned comment with the associated ID' , () => {
+        User.create({
+          email: 'SpacePirate@yarr.com',
+          password: 'notSpaceCowboy',
+          role: 'member'
+        })
+        .then((user) => {
+          Comment.create({
+            body: 'Are there sharks in space?',
+            postId: this.post.id,
+            userId: user.id
+          })
+          .then((comment) => {
+            Comment.all()
+            .then((comments) => {
+              const commentCountBeforeDelete = comments.length;
+
+              request.post(`${base}${this.topic.id}/posts/${this.post.id}/comments/${comment.id}/destroy`, (err, res, body) => {
+
+                expect(err).toBeNull();
+
+                Comment.all()
+                .then((comments) => {
+                  expect(comments.length).toBe(commentCountBeforeDelete);
+                  done();
+                });
+              });
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            done();
+          });
+        });
+      });
+
     });
 
   });
+
+
 
 });
