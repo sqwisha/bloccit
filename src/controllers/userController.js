@@ -5,7 +5,7 @@ module.exports = {
   signUp(req, res, next) {
     res.render('users/sign_up');
   },
-  create(req, res, next){
+  create(req, res, next) {
     let newUser = {
       email: req.body.email,
       password: req.body.password,
@@ -13,7 +13,7 @@ module.exports = {
     };
 
     userQueries.createUser(newUser, (err, user) => {
-      if(err){
+      if (err) {
         req.flash('error', err);
         res.redirect('/users/sign_up');
       } else {
@@ -24,12 +24,12 @@ module.exports = {
       }
     });
   },
-  signInForm(req, res, next){
+  signInForm(req, res, next) {
     res.render('users/sign_in');
   },
-  signIn(req, res, next){
+  signIn(req, res, next) {
     passport.authenticate('local')(req, res, function () {
-      if(!req.user){
+      if (!req.user) {
         req.flash('notice', 'Sign in failed. Please try again.')
         res.redirect('/users/sign_in');
       } else {
@@ -38,7 +38,7 @@ module.exports = {
       }
     });
   },
-  signOut(req, res, next){
+  signOut(req, res, next) {
     req.logout();
     req.flash('notice', `You've successfully signed out!`);
     res.redirect('/');
