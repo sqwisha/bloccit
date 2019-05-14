@@ -51,6 +51,8 @@ describe('routes : votes', () => {
     });
   });
 
+//-------------------------GUEST USER------------------------------------------
+
   describe('guest attempting to vote on a post', () => {
 
     beforeEach((done) => {
@@ -94,6 +96,8 @@ describe('routes : votes', () => {
     });
   });
 
+//-----------------------MEMBER USER-------------------------------------------
+
   describe('signed in user voting on a post', () => {
 
     beforeEach((done) => {
@@ -136,6 +140,34 @@ describe('routes : votes', () => {
           });
         });
       });
+
+      it('should not allow more than 1 vote per user per post', (done) => {
+        const options = {
+          url: `${base}${this.topic.id}/posts/${this.post.id}/votes/upvote`
+        };
+        request.get(options, (err, res, body) => {
+          expect(err).toBeNull();
+
+          request.get(options, (err, res, body) => {
+            Vote.findOne({
+              where: {
+                userId: this.user.id,
+                postId: this.post.id
+              }
+            })
+            .then((vote) => {
+              expect(vote.value).toBe(1);
+              expect(vote.userId).toBe(this.user.id);
+              done();
+            })
+            .catch((err) => {
+              console.log(err);
+              done();
+            });
+          });
+        });
+      });
+
     });
 
     describe('GET /topics/:topicId/posts/:postId/votes/downvote', () => {
