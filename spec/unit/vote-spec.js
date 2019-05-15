@@ -263,23 +263,9 @@ describe('Vote', () => {
   describe('#getPoints()', () => {
 
     it('should return total votes for a given post', (done) => {
-      this.post.getPoints((res) => {
-        expect(err).toBeNull();
-        expect(res).toBe(0);
-      });
-
-      Vote.create({
-        value: 1,
-        userId: this.user.id,
-        postId: this.post.id
-      })
-      .then((vote) => {
-        this.post.getPoints((err, res) => {
-          expect(err).toBeNull();
-          expect(res).toBe(1);
-          done();
-        });
-      });
+      const postPointsBefore = this.post.getPoints();
+      expect(postPointsBefore).toBe(0);
+      done();
     });
 
   });

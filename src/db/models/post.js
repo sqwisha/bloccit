@@ -35,21 +35,23 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'postId',
       as: 'votes'
     });
-  };
-  Post.prototype.getPoints = function(callback){
-    this.getVotes()
-    .then((votes) => {
-      if (votes.length === 0) return 0;
-
-      let points = votes
-        .map((v) => { return v.value })
-        .reduce((prev, next) => { return prev + next });
-
-      callback(null, points);
-    })
-    .catch((err) => {
-      callback(err);
+    Post.hasMany(models.Favorite, {
+      foreignKey: 'postId',
+      as: 'favorites'
     });
+    Post.afterCreate((post, callback) => {
+      return models.Favorite.create({
+        userId: post.userId,
+        postId: post.id
+      });
+    });
+  };
+  Post.prototype.getPoints = function() {
+    if (!this.votes || this.votes.length === 0) return 0;
+
+    return this.votes
+      .map((v) => { return v.value })
+      .reduce((prev, next) => { return prev + next });
   };
   Post.prototype.hasUpvoteFor = function(userId, callback) {
     return this.getVotes({
@@ -72,6 +74,9 @@ module.exports = (sequelize, DataTypes) => {
     .then((votes) => {
       votes.length > 0 ? callback(true) : callback(false);
     });
+  };
+  Post.prototype.getFavoriteFor = function(userId) {
+    return this.favorites.find((favorite) => { return favorite.userId == userId });
   };
   return Post;
 };

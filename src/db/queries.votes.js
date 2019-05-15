@@ -4,7 +4,7 @@ const User = require('./models').User;
 const Vote = require('./models').Vote;
 
 module.exports = {
-  createVote(req, val, callback){
+  createVote(req, val, callback) {
     return Vote.findOne({
       where: {
         postId: req.params.postId,
@@ -12,7 +12,7 @@ module.exports = {
       }
     })
     .then((vote) => {
-      if(vote){
+      if (vote) {
         vote.value = val;
         vote.save()
         .then((vote) => {
