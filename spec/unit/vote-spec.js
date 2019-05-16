@@ -274,22 +274,7 @@ describe('Vote', () => {
 
     it('should return whether user has an upvote for a particular post', (done) => {
       this.post.hasUpvoteFor(this.user.id, (res) => {
-        expect(res).toBe(false);
-      });
-
-      Vote.create({
-        value: 1,
-        postId: this.post.id,
-        userId: this.user.id
-      })
-      .then((vote) => {
-        this.post.hasUpvoteFor(this.user.id, (res) => {
-          expect(res).toBe(true);
-          done();
-        });
-      })
-      .catch((err) => {
-        console.log(err);
+        expect(res).toBe(true); // upvote added on post.afterCreate()
         done();
       });
     });
